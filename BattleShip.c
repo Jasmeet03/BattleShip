@@ -74,32 +74,45 @@ int shipInit(int *shipp){
     
 }
 
-int checkCorners(int x,int s){
-    int y = 0;
-    y = x+s;
-    if (y >= 10){
+
+
+int checkCorners(int shipPointer,int s){
+    int shipLen = 0;
+    shipLen = shipPointer+s-1;
+    printf("\nShipLen %d",shipLen);
+    if (shipLen >= 10){
         return 0;
     }else return 1;
     
     //if the ship is placed at 4 courners of the board give error msg to the user and let him place the ship again
 }
 int checkAllot(int **ship_ptr,int x,int y,int s,int c){
-    int tvalue,count,scount;
+    int tvalue,count,scount,shipVBlock,shipHBlock;
     scount =0;
     if (c == 1){
         tvalue = checkCorners(x,s);
         count = s;
         if (tvalue == 1)
         {
-            for (int i = 0; i < count; i++)
+            for (int i = -1; i <= count; i++)
             {
-                if (ship_ptr[x+i][y] != 1)
+                if (ship_ptr[x+i][y] != 1 )
                 {
                     scount = scount+1;
+                }  
+            }
+            for (int i = 0; i < count; i++)
+            {
+                if (ship_ptr[x+i][y-1] != 1 && ship_ptr[x+i][y+1] != 1)
+                {
+                    shipHBlock =1;
                 }
                 
             }
-            if (scount == s)
+            
+            
+            
+            if (scount-2 == s && shipHBlock ==1)
             {
                 return 1;
             }else return 0;
@@ -113,6 +126,7 @@ int checkAllot(int **ship_ptr,int x,int y,int s,int c){
         {
             for (int i = 0; i < count; i++)
             {
+                printf("\n %d",ship_ptr[x][y+i]);
                 if (ship_ptr[x][y+i] != 1)
                 {
                     scount = scount+1;
@@ -129,8 +143,70 @@ int checkAllot(int **ship_ptr,int x,int y,int s,int c){
     
 }
 
+/*
+
+
+int checkCorners(int len,int s){
+    int shipLenCheck = 0;
+    shipLenCheck = len+s;
+    if (shipLenCheck >= 10){
+        return 0;
+    }else return 1;
+    
+    //if the ship is placed at 4 courners of the board give error msg to the user and let him place the ship again
+}
+int checkVerAllot(int **ship_ptr,int x,int y,int s){
+    int tvalue,count,scount;
+    scount = 0;
+    tvalue = checkCorners(y,s);
+    count = s;
+    if (tvalue == 1)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (ship_ptr[x+i][y] != 1)
+            printf("\n %lc",ship_ptr[x+i][y]);
+            {
+                scount = scount+1;
+            }
+            
+        }
+        if (scount == s)
+        {
+            return 1;
+        }else return 0;
+                
+    }   
+}
+   
+int checkHorAllot(int **ship_ptr,int x,int y,int s){
+    int tvalue,count,scount;
+    scount =0;
+    tvalue = checkCorners(y,s);
+    count = s;
+    printf("\nPlacing Ship Horizontally");
+    if (tvalue == 1)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (ship_ptr[x][y+i] != 1)
+            printf("\n %lc",ship_ptr[x+i][y]);
+            {
+                scount = scount+1;
+            }
+            
+        }
+        if (scount == s)
+        {
+            return 1;
+        }else return 0;
+                
+    }   
+}
+*/
+
 int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
-    int xpos,ypos,svalue,tvalue;
+    int xpos,ypos,svalue,tvalue,axis;
     char dir;
     struct BattleShipCo s;
     struct BattleShipCo e;
@@ -143,16 +219,19 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
         if (guii_Ptr[i][0]==toupper(s.x))
         {
             xpos=i;
+            printf("\nxpos:%d",xpos);
         }
-        if (guii_Ptr[0][i]==s.y)
+        if (guii_Ptr[0][i]==s.y+47+1)
         {
             ypos=i;
+            printf("\nypos:%d",ypos);
         }
         
     }
     svalue = shipp_def[n-1];
+    printf("\n Ship Value %d",svalue);
     printf("\nTo place ship vertically enter V to place it horizontally enter H");
-    scanf("%c",&dir);
+    scanf(" %c",&dir);
     buff_clr();
     switch (dir)
     {
@@ -160,12 +239,23 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
     case 'V':
         tvalue = checkAllot(shipp_ptr,xpos,ypos,svalue,1);
         if (tvalue == 1){
-            for (int i = 0; i < svalue; i++)
+            for (int i = -1; i <= svalue; i++)
             {
                 shipp_ptr[xpos+i][ypos] = 1;
             }
+            for (int i = 0; i < svalue; i++)
+            {
+                shipp_ptr[xpos+i][ypos-1] =1;
+                shipp_ptr[xpos+i][ypos+1] =1;
+                guii_Ptr[xpos+i][ypos] = 'X';
+            }
+            
+            printf("\n\n");
+            drawGui(guii_Ptr);
+            return 1;
         }else if(tvalue == 0){
             printf("\nAfter Placing the ship at your coridnate either ship goes beond board size or there is another ship parked at same posi :D");
+            return 0;
         }// I need to run Repeat 1 again
         break;
     case 'h':
@@ -175,21 +265,27 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
             for (int i = 0; i < svalue; i++)
             {
                 shipp_ptr[xpos][ypos+i] = 1;
+                guii_Ptr[xpos][ypos+i] = 'X';
             }
+            printf("\n\n");
+            drawGui(guii_Ptr);
+            return 1;
         }else if(tvalue == 0){
             printf("\nAfter Placing the ship at your coridnate either ship goes beond board size or fit exactly at corner therefore reenter the coords :D");
+            return 0;
         }// I need to Run Reapat 1 again        
         break;
 
     default:
         printf("You didn't enter correct value");
+        return 0;
         break;
     }
 }
 
 
 void shipPlacementCom(int **ship_Ptr,char **gui_ptr,int *ship_def){
-    int i,j;
+    int i,j,k;
     srand(time(NULL));
     int count = 10;
     int type;
@@ -208,33 +304,48 @@ void shipPlacementCom(int **ship_Ptr,char **gui_ptr,int *ship_def){
         case 1:
             if (des >0)
             {
-                placingShip(ship_Ptr,gui_ptr,ship_def,type);
-                des = des -1;
-                count--;
-            }else(printf("\n You have already place the Ship"));
+                k=placingShip(ship_Ptr,gui_ptr,ship_def,type);
+                printf("\n shipVal %d",k);
+                if (k ==1){
+                    des = des -1;
+                    count--;
+                }
+                k = 0;
+
+            }else(printf("\n You have already place the Ship or entered Wrong board value"));
             break;
         case 2:
             if (sub >0)
             {
-                placingShip(ship_Ptr,gui_ptr,ship_def,type);
-                sub=sub-1;
-                count--;
+                k=placingShip(ship_Ptr,gui_ptr,ship_def,type);
+                printf("\n shipVal %d",k);
+                if (k ==1){
+                    sub = sub -1;
+                    count--;
+                }
+                k = 0;
             }else(printf("\n You have already place the Ship"));
             break;
         case 3:
             if (xyz >0)
             {
-                placingShip(ship_Ptr,gui_ptr,ship_def,type);
-                xyz=xyz-1;
-                count--;
+                k=placingShip(ship_Ptr,gui_ptr,ship_def,type);
+                if (k ==1){
+                    xyz = xyz -1;
+                    count--;
+                }
+                k =0;
             }else(printf("\n You have already place the Ship"));
             break;
         case 4:
             if (abc >0)
             {
-                placingShip(ship_Ptr,gui_ptr,ship_def,type);
-                abc=abc-1;
-                count--;
+                k=placingShip(ship_Ptr,gui_ptr,ship_def,type);
+                if (k ==1){
+                    abc = abc -1;
+                    count--;
+                }
+                k=0;
             }else(printf("\n You have already place the Ship"));
             break;
         
