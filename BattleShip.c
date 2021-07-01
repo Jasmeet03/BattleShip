@@ -1,8 +1,16 @@
+/* 
+This Code is Written By Jaasmeet Singh Matta
+This Code can be used for reference in the future by anyone by following the license Agreement i.e. GNU3/MIT(exact license will be mentioned on GITHUB)
+The following Terms and Conditioned must be followed as applicable  
+This code cannot be used for gaining popularity, score, marks anywhere where the author @JasmeetSingh is not mentioned with his GitHub profile Link
+This code can be used for Educational purposes i.e. to understand the C language or to use as a reference for educating others
+*/
+
+
 #include<stdio.h>
 #include<time.h>
 #include<stdlib.h>
 #include<ctype.h>
-#define MAX_RANDOM ((1 << 31) - 1)
 
 
 //#include "Level1.h"
