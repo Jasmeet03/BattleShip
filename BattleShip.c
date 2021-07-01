@@ -2,9 +2,12 @@
 #include<time.h>
 #include<stdlib.h>
 #include<ctype.h>
+#define MAX_RANDOM ((1 << 31) - 1)
+
+
 //#include "Level1.h"
 
-
+//To Remove Junk value
 void buff_clr(void)
 {
     char junk;
@@ -19,6 +22,7 @@ struct BattleShipCo
     char x;
     int y;
 };
+/*
 void shipPtrSet(int **ship_Ptr){
 
     for (int k = 0; k < 11; k++)
@@ -29,8 +33,8 @@ void shipPtrSet(int **ship_Ptr){
         }
         
     }
+}*/
 
-}
 //gernerating board with pointers
 void boardGui(char **gui_Ptr){
 
@@ -53,7 +57,7 @@ void boardGui(char **gui_Ptr){
     }
 }
 
-
+// Drawing Board on terminal
 void drawGui(char **gui_Ptr){
 
     for (int i = 0; i < 11; i++)
@@ -65,7 +69,8 @@ void drawGui(char **gui_Ptr){
         printf("\n\n");
     }
 }
-
+// There are 4 type of ship with Different Value Such as Destroyer / Submarine etc etc I am not good at naming :P
+// Creating Different Ship with Different Value
 int shipInit(int *shipp){
     int count = 5;
     for (int i = 0; i < 4; i++)
@@ -77,17 +82,20 @@ int shipInit(int *shipp){
 }
 
 
-
+// To Check if placing a ship at specific pos will go out of bounds for example placing a ship of length 5 at 7,7 cords od 10*10 board (horiz or verti) will get it out of board
 int checkCorners(int shipPointer,int s){
     int shipLen = 0;
     shipLen = shipPointer+s-1;
-    printf("\nShipLen %d",shipLen);
+    //printf("\nShipLen %d",shipLen);
     if (shipLen > 10){
         return 0;
-    }else return 1;
-    
+    }else if(shipLen <= 10){
+        return 1;
+    }
     //if the ship is placed at 4 courners of the board give error msg to the user and let him place the ship again
 }
+
+// to check if there is 1 unit of block between two ship and to check if there are ships on that posi or not
 int checkAllot(int **ship_ptr,int x,int y,int s,int c){
     int tvalue,count,scount,shipVBlock,shipHBlock;
     shipVBlock =0;
@@ -119,7 +127,9 @@ int checkAllot(int **ship_ptr,int x,int y,int s,int c){
             if (scount == s && shipHBlock == count)
             {
                 return 1;
-            }else return 0;
+            }else if (scount != s && shipHBlock != count){
+                return 0;
+            }
                     
         }   
     }
@@ -137,7 +147,7 @@ int checkAllot(int **ship_ptr,int x,int y,int s,int c){
             }
             for (int i = 0; i < count; i++)
             {
-                printf("\n letss see wtf");
+                //printf("\n letss see");
                 if (ship_ptr[x-1][y+i] != 1 && ship_ptr[x+1][y+i] != 1 && ship_ptr[x][y-1] != 1 && ship_ptr[x][y+count] != 1)
                 {
                     shipVBlock =shipVBlock+1;
@@ -149,75 +159,16 @@ int checkAllot(int **ship_ptr,int x,int y,int s,int c){
             if (scount == s && shipVBlock ==count)
             {
                 return 1;
-            }else return 0;
+            }else if(scount != s && shipVBlock != count){
+                return 0;
+            }
                     
         }   
     }
     
 }
 
-/*
-
-
-int checkCorners(int len,int s){
-    int shipLenCheck = 0;
-    shipLenCheck = len+s;
-    if (shipLenCheck >= 10){
-        return 0;
-    }else return 1;
-    
-    //if the ship is placed at 4 courners of the board give error msg to the user and let him place the ship again
-}
-int checkVerAllot(int **ship_ptr,int x,int y,int s){
-    int tvalue,count,scount;
-    scount = 0;
-    tvalue = checkCorners(y,s);
-    count = s;
-    if (tvalue == 1)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            if (ship_ptr[x+i][y] != 1)
-            printf("\n %lc",ship_ptr[x+i][y]);
-            {
-                scount = scount+1;
-            }
-            
-        }
-        if (scount == s)
-        {
-            return 1;
-        }else return 0;
-                
-    }   
-}
-   
-int checkHorAllot(int **ship_ptr,int x,int y,int s){
-    int tvalue,count,scount;
-    scount =0;
-    tvalue = checkCorners(y,s);
-    count = s;
-    printf("\nPlacing Ship Horizontally");
-    if (tvalue == 1)
-    {
-        for (int i = 0; i < count; i++)
-        {
-            if (ship_ptr[x][y+i] != 1)
-            printf("\n %lc",ship_ptr[x+i][y]);
-            {
-                scount = scount+1;
-            }
-            
-        }
-        if (scount == s)
-        {
-            return 1;
-        }else return 0;
-                
-    }   
-}
-*/
-
+// To place the Ship on Board
 int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
     int xpos,ypos,svalue,tvalue,axis;
     char dir;
@@ -231,18 +182,18 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
         if (guii_Ptr[i][0]==toupper(s.x))
         {
             xpos=i;
-            printf("\nxpos:%d",xpos);
+            //printf("\nxpos:%d",xpos);
         }
         if (guii_Ptr[0][i]==s.y+48)
         {
             ypos=i;
-            printf("\nypos:%d",ypos);
+            //printf("\nypos:%d",ypos);
         }
         
     }
     svalue = shipp_def[n-1];
-    printf("\n Ship Number/Type %d",svalue);
-    printf("\nTo place ship vertically enter V to place it horizontally enter H");
+    printf("\nShip length: %d",svalue);
+    printf("\nTo place ship vertically enter V to place it horizontally enter H  ");
     scanf(" %c",&dir);
     buff_clr();
     switch (dir)
@@ -262,6 +213,7 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
                 shipp_ptr[xpos+i][ypos+1] =3;
             }*/
             printf("\n");
+            /*
             for (int i = 0; i < 12; i++)
             {
                 for (int j = 0; j < 12; j++)
@@ -269,7 +221,7 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
                     printf("%6d",shipp_ptr[i][j]);
                 }
                 printf("\n");
-            }
+            }*/
             
             printf("\n\n");
             drawGui(guii_Ptr);
@@ -290,6 +242,7 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
             }
 
             printf("\n");
+            /*
             for (int i = 0; i < 12; i++)
             {
                 for (int j = 0; j < 12; j++)
@@ -297,7 +250,7 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
                     printf("%6d",shipp_ptr[i][j]);
                 }
                 printf("\n");
-            }
+            }*/
 
             printf("\n\n");
             drawGui(guii_Ptr);
@@ -315,19 +268,18 @@ int placingShip(int **shipp_ptr,char **guii_Ptr,int *shipp_def ,int n){
     }
 }
 
-
+//The actual call of Ship Placement which is like controll unit for rest of the fn which helps placing ship
 void shipPlacement(int **ship_Ptr,char **gui_ptr,int *ship_def){
     int i,j,k;
-    srand(time(NULL));
-    int count = 10;
+    int count = 10;//Total number of ship on board is 10 which total occupies 30 unit of square or 30 data size out of 121 data size 
     int type;
-    int des =1;
+    int des =1;//this are four type of ship as i mentioned earlier i am noot good at naming 
     int sub =2; 
     int xyz =3;
     int abc =4;
     while (count>0)
     {
-        printf("\nEnter the Type of Ship for type 1 type 1 for type 2 type 2 for type 3 type 3 for type 4 type 4 ");
+        printf("\nEnter the Type of Ship for DEstroyer of Size 5 Qty 1 enter 1\nFor Submarine Size 4 Qty 2 enter 2\nFor Little Bird Size 3 Qty 3 enter 3\nFor type Scout Size 2 Qty 4 enter 4 ");
         scanf("%d",&type);
         buff_clr();  
         // ship to be placed on board
@@ -337,7 +289,7 @@ void shipPlacement(int **ship_Ptr,char **gui_ptr,int *ship_def){
             if (des >0)
             {
                 k=placingShip(ship_Ptr,gui_ptr,ship_def,type);
-                printf("\n shipVal %d",k);
+                //printf("\n shipVal %d",k);
                 if (k ==1){
                     des = des -1;
                     count--;
@@ -350,7 +302,7 @@ void shipPlacement(int **ship_Ptr,char **gui_ptr,int *ship_def){
             if (sub >0)
             {
                 k=placingShip(ship_Ptr,gui_ptr,ship_def,type);
-                printf("\n shipVal %d",k);
+                //printf("\n shipVal %d",k);
                 if (k ==1){
                     sub = sub -1;
                     count--;
@@ -393,9 +345,9 @@ void shipPlacement(int **ship_Ptr,char **gui_ptr,int *ship_def){
 int getPosValue(char **comGui_Ptr){
     int xpos,ypos;
 
-    srand(time(NULL));
-    co.x = (char)(64+(rand()%10));
-    co.y = rand()%10;
+    srandom(time(NULL));
+    co.x = (char)(64+(random()%10));
+    co.y = random()%10;
     for (int i = 0; i < 11; i++)
     {
         if (comGui_Ptr[i][0]==toupper(co.x))
@@ -411,18 +363,23 @@ int getPosValue(char **comGui_Ptr){
 }
 */
 
+// computer placing Ship randomly
 void shipPlacementComputer(int **shipCom_Ptr,int *ship_def,char **comGui_Ptr){
     struct BattleShipCo co;
     int allignment;
     int xpos,ypos,svalue,count,tvalue;
-    
+    //long n;
+    //u_int32_t n = arc4random_uniform(10);
+    //printf("%d",n);
+
     count = 1;
     tvalue = 0;
     srand(time(NULL));
+    rand();
     allignment = ((rand()%2)+1);
     /*
-    co.x = (char)(64+(rand()%10));
-    co.y = rand()%10;
+    co.x = (char)(64+(random()%10));
+    co.y = random()%10;
     for (int i = 0; i < 11; i++)
     {
         if (comGui_Ptr[i][0]==toupper(co.x))
@@ -442,7 +399,9 @@ void shipPlacementComputer(int **shipCom_Ptr,int *ship_def,char **comGui_Ptr){
             while (tvalue != 1)
             {
                 //xpos,ypos = getPosValue(comGui_Ptr);
+                rand();
                 co.x = (char)(64+(rand()%10));
+                rand();
                 co.y = rand()%10;
                 for (int i = 0; i < 11; i++)
                 {
@@ -455,7 +414,7 @@ void shipPlacementComputer(int **shipCom_Ptr,int *ship_def,char **comGui_Ptr){
                         ypos=i;
                     }
                 }
-                printf("\n xposINSHIPCOM:%d\nyposINSHIPCOM%d",xpos,ypos);
+                //printf("\n xposINSHIPCOM:%d\nyposINSHIPCOM%d",xpos,ypos);
                 tvalue = checkAllot(shipCom_Ptr,xpos,ypos,svalue,allignment);
                 if (tvalue == 1 && allignment == 1){
                     for (int i = 0; i < svalue; i++)
@@ -475,277 +434,20 @@ void shipPlacementComputer(int **shipCom_Ptr,int *ship_def,char **comGui_Ptr){
                     printf("\n\n");
                 }   
             }
+            rand();
             allignment = ((rand()%2)+1);
             tvalue = 0;
         }
         count = count +1;
-        printf("\nCount=%d",count);
+        //printf("\nCount=%d",count);
     }
     printf("\nDone Placing Computer Ship");
-    printf("\n\n");
-    drawGui(comGui_Ptr);
+    //printf("\n\n");
+    //drawGui(comGui_Ptr);
 }
 
-/*
 
-int comShipShooting(int **oppShip_Ptr,char **oppGui_Ptr,int *score_Ptr){
-    int xpos,ypos;
-    srand(time(NULL));
-
-    co.x = (char)(64+(rand()%10));
-    co.y = rand()%10;
-    for (int i = 0; i < 11; i++)
-    {
-        if (oppGui_Ptr[i][0]==(co.x))
-        {
-            xpos=i;
-        }
-        if (oppGui_Ptr[0][i]==co.y+48)
-        {
-            ypos=i;
-        }
-    }
-    if (oppShip_Ptr[xpos][ypos] == 1 && oppGui_Ptr[xpos][ypos]=='*')
-    {
-        // Need to make it reshoot
-        printf("\nHit From Computer");
-        oppGui_Ptr[xpos][ypos] == 'X';
-        score_Ptr[0] = score_Ptr[0] +1;
-        return 2;
-
-    }
-    else if (oppShip_Ptr[xpos][ypos] == 1 && oppGui_Ptr[xpos][ypos] == 'X')
-    {
-        //printf("\nYou have Already hitted here please re enter the coords and rehit");
-        return 2;
-        // Bad input Need to rewrite coords
-
-    }
-    else if (oppShip_Ptr[xpos][ypos] != 1 && oppGui_Ptr[xpos][ypos] == 'O')
-    {
-        //Bad input need to reshoot
-
-        //printf("\nYou have Already hitted here please re enter the coords and rehit");
-        return 2;
-    }
-    
-    else if (oppShip_Ptr[xpos][ypos] != 1 && oppGui_Ptr[xpos][ypos]== '*')
-    {
-        printf("\nMiss From Computer");
-        oppGui_Ptr[xpos][ypos] = 'O';
-        return 1;
-    }
-
-}
-int playerShoot(int **oppShip_Ptr,char **oppGui_Ptr,int *score_Ptr){
-    int xpos,ypos;
-    char xCord;
-    int yCord;
-    int j=0;
-
-    drawGui(oppGui_Ptr);
-
-    printf("\n\nEnter Coordinate you want to attack on opponent board\n");
-    
-    scanf("%c,%d",&co.x,&co.y);
-    buff_clr();
-    for (j = 0; j < 11; j++)
-    {
-        //printf("Alphabets: %c\nNumbers: %c\n",oppGui_Ptr[j][0],oppGui_Ptr[0][j]);
-        if (oppGui_Ptr[j][0] == toupper(co.x))
-        {
-            printf("x.i %c\n",oppGui_Ptr[j][0]);
-            printf("value j: %d",j);
-            xpos=j;
-        }
-        if (oppGui_Ptr[0][j]==co.y+48)
-        {
-            ypos=j;
-        }
-    }
-    //scanf("%c,%d",&xCord,&yCord);
-    printf("S.X: %c\n",co.x);*/
-    /*
-    for (int i = 0; i < 11; i++)
-    {
-        if (oppGui_Ptr[i][0]==(char)toupper(xCord))
-        {
-            xpos=i;
-            printf("\nxpos:%d",xpos);
-        }
-        if (oppGui_Ptr[0][i]==yCord+48)
-        {
-            ypos=i;
-            printf("\nypos:%d",ypos);
-        }
-        
-    }*//*
-    printf("XPOS: %c\nYPOS: %d\n",xpos,ypos);
-    if (oppShip_Ptr[xpos][ypos] == 1 && oppGui_Ptr[xpos][ypos]=='*')
-    {
-        // Need to make it reshoot
-        printf("\nHit");
-        oppGui_Ptr[xpos][ypos] == 'X';
-        score_Ptr[0] = score_Ptr[0] +1;
-        return 1;
-
-    }
-    else if (oppShip_Ptr[xpos][ypos] == 1 && oppGui_Ptr[xpos][ypos] == 'X')
-    {
-        printf("\nYou have Already hitted here please re enter the coords and rehit");
-        return 1;
-        // Bad input Need to rewrite coords
-    }
-    else if (oppShip_Ptr[xpos][ypos] != 1 && oppGui_Ptr[xpos][ypos] == 'O')
-    {
-        //Bad input need to reshoot
-        printf("\nYou have Already hitted here please re enter the coords and rehit");
-        return 1;
-    }
-    
-    else if (oppShip_Ptr[xpos][ypos] != 1 && oppGui_Ptr[xpos][ypos]== '*')
-    {
-        printf("\nMiss");
-        oppGui_Ptr[xpos][ypos] = 'O';
-        return 2;
-    }
-    
-
-}
-int level1(int **comShip_ptr,int **playerShip_ptr,char **comGui_ptr, char **playerGui_ptr)
-{
-    int firstShoot,changeShooter;
-    int xPos,yPos;
-    //,comPoints,player1Points;
-    int *comScorePointer;
-    int *playerScorePointer;
-
-    comScorePointer = (int*)malloc(1*sizeof(int));
-    playerScorePointer = (int*)malloc(1*sizeof(int));
-
-    comScorePointer[0]=0;
-    playerScorePointer[0]=0;
-    //flipCoinToNum = 2;
-    /*
-    comPoints =0;
-    player1Points =0;
-    *comScorePointer = &comPoints;
-    *playerScorePointer = &player1Points;*//*
-    srand(time(NULL));
-
-
-    firstShoot = rand()%2;
-    printf("\nfirstshoot %d\n",firstShoot);
-  
-  /*
-
-
-    do
-    {
-        printf("\nTO DECIDE WETHER COMPUTER SHOOTS 1ST OR YOU WE ARE GOING TO FLIP A COIN");
-        printf("\nYou have the option to select heads or tails\nFor Head enter 'h' or 'H' and for Tails enter 't' or 'T'\n");
-        //flipCoin = getchar();
-        scanf("%c",&flipCoin);
-        buff_clr();
-        /*
-        switch (flipCoin)
-        {
-        case 'h':
-        case 'H':
-            int flipCoinToNum = 1;
-            break;
-        case 't':
-        case 'T':
-            int flipCoinToNum = 0;
-            break;
-        default:
-            printf("wrong value re enter");
-            break;
-        }
-        if (flipCoin == "h" || flipCoin == "H")
-        {
-            flipCoinToNum =1;
-        }
-        else if (flipCoin == "t" || flipCoin == "T")
-        {
-            flipCoinToNum =0;
-        }
-        else{
-            printf("\nEnter Correct Value\n");  
-        }
-        }while (flipCoinToNum != 1 || flipCoinToNum != 0);
-
-    *//*
-    //printf("\n%c",flipCoin);
-    //if (flipCoinToNum == 1 && firstShoot == 1) 
-    if(firstShoot ==1)
-    {
-        printf("we in if statement\n");
-        printf("%d\n",comScorePointer[0]);
-        changeShooter = 1;
-        while (comScorePointer[0] != 30 || playerScorePointer[0] !=30)
-        {
-            if (changeShooter == 1){
-                changeShooter = playerShoot(comShip_ptr,comGui_ptr,playerScorePointer);
-            }
-            if (changeShooter == 2)
-            {
-                changeShooter = comShipShooting(playerShip_ptr,playerGui_ptr,comScorePointer);
-            }
-        }
-        
-    }/*
-    else if (flipCoinToNum == 0 && firstShoot == 0)
-    {
-        //Let Plater shoot First
-        changeShooter = 1;
-        while (comScorePointer[0] == 30 || playerScorePointer[0] ==30)
-        {
-            /* code 
-            if (changeShooter == 1){
-                changeShooter = playerShoot(comShip_ptr,comGui_ptr,playerScorePointer);
-            }
-            if (changeShooter == 2)
-            {
-                changeShooter = comShipShooting(playerShip_ptr,playerGui_ptr,comScorePointer);
-            }
-
-        }
-        
-    }*//*
-    else if(firstShoot == 0){
-        printf("we in else if statement\n");
-        //computer shoot first
-        changeShooter = 2;
-        while (playerScorePointer[0] !=30 || comScorePointer[0] != 30)
-        {
-            /* code *//*
-            if (changeShooter == 1){
-                changeShooter = playerShoot(comShip_ptr,comGui_ptr,playerScorePointer);
-                printf("\n Com Board:\n\n");
-                drawGui(comGui_ptr);
-                printf("\n");
-            }
-            if (changeShooter == 2)
-            {
-                printf("Change shooter = 2\n");
-                changeShooter = comShipShooting(playerShip_ptr,playerGui_ptr,comScorePointer);
-                printf("\n Player Board:\n\n");
-                drawGui(playerGui_ptr);
-                printf("\n");
-            }
-
-        }
-        
-    }
-
-}*/
-
-
-
-//void shipBattleCom(int **ship_Ptr,char **gui_Ptr)
-
-
+// Shooting the ship
 int shootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
     int xpos,ypos,score,toShoot;
     struct BattleShipCo s;
@@ -753,13 +455,23 @@ int shootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
     score =0;
     while (toShoot != 0)
     {
-    
+        do{
+            printf("enter coords\n");
+            scanf("%c,%d",&s.x,&s.y);
+            buff_clr();
+        }while(toupper(s.x) <63 || toupper(s.x) > 75 || s.y >10);
+    /*
         printf("enter coords\n");
         scanf("%c,%d",&s.x,&s.y);
         buff_clr();
-        //if (toupper(s.x) >63 && toupper(s.x) < 75 && s.y <11)
-        //{
-            
+        if (toupper(s.x) <63 || toupper(s.x) > 75 || s.y >10)
+        {   do{
+            printf("enter coords\n");
+            scanf("%c,%d",&s.x,&s.y);
+            buff_clr();
+            }while(toupper(s.x) <63 || toupper(s.x) > 75 || s.y >10)
+        }
+    */
             for (int i = 0; i < 11; i++)
             {
                 if (gui_ptr[i][0] == toupper(s.x))
@@ -772,10 +484,16 @@ int shootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
                 }
             }
 
+            if (score_ptr[0] == 30)
+            {
+                toShoot = 0;
+                break;
+            }
+
             if (ship_ptr[xpos][ypos] == 1 && gui_ptr[xpos][ypos]=='*')
             {
                 // Need to make it reshoot
-                printf("\nHit\n\n ");
+                printf("\nHit\n\n\n");
                 gui_ptr[xpos][ypos] = 'X';
                 score_ptr[0] = score_ptr[0]+1;
                 score = score +1;
@@ -816,10 +534,12 @@ int shootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
 }
 
 
-
+// Function for automatic shooting as level 1 as probability of shooting ship is 1/100
 int comShootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
     int xpos,ypos,score,toShoot;
     struct BattleShipCo s;
+
+
     srand(time(NULL));
 
 
@@ -831,7 +551,7 @@ int comShootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
         //printf("enter coords\n");
         //scanf("%c,%d",&s.x,&s.y);
         //buff_clr();
-        s.x = (char)((rand()%10)+63);
+        s.x = (char)((rand()%10)+65);
         s.y = rand()%10;
         for (int i = 0; i < 11; i++)
         {
@@ -845,10 +565,16 @@ int comShootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
             }
         }
 
+        if (score_ptr[0] == 30)
+        {
+            toShoot = 0;
+            break;
+        }
+
         if (ship_ptr[xpos][ypos] == 1 && gui_ptr[xpos][ypos]=='*')
         {
             // Need to make it reshoot
-            printf("\nHit\n \n");
+            printf("\nHit\n\n\n");
             gui_ptr[xpos][ypos] = 'X';
             score_ptr[0] = score_ptr[0]+1;
             score = score +1;
@@ -885,6 +611,110 @@ int comShootShip(char **gui_ptr,int **ship_ptr,int *score_ptr){
 
 
 
+
+// computer shooting ship with accuracy of 25percent + getting 1 out of rest randly 
+int comShootShip_Lvl2(char **gui_ptr,int **ship_ptr,int *score_ptr){
+    int xpos,ypos,score,toShoot,shootProb,j,k,i;
+    struct BattleShipCo s;
+
+    srand(time(NULL));
+
+    shootProb = rand()%3+1;
+    //printf("*********Level 2*************\n");
+    //printf("\nShootProb: %d",shootProb);
+    toShoot = 1;
+    score =0;
+
+    while (toShoot != 0)
+    {
+    
+        if (shootProb == 1)
+        {
+            for (j = 0; j < 11; j++)
+            {
+                for (k = 0; k < 11; k++)
+                {
+                    if (ship_ptr[j][k] == 1 && gui_ptr[j][k] != 'X')
+                    {
+                        xpos = j;
+                        ypos = k;
+                    }
+                    
+                }
+                
+            }
+            
+        }else if(shootProb != 1){
+            s.x = (char)((rand()%10)+65);
+            s.y = rand()%10;
+
+            //printf("\n in else if after prob s.x: %c",s.x);
+
+            for (int i = 0; i < 11; i++)
+            {
+                if (gui_ptr[i][0] == toupper(s.x))
+                {
+                    xpos =i;
+                }
+                if (gui_ptr[0][i]== s.y+48)
+                {
+                    ypos = i;
+                }
+            }
+            i = 0;
+        }
+        //printf("Level 2 Xpos: %d Ypos: %d\n",xpos,ypos);
+        
+        if (score_ptr[0] == 30)
+        {
+            toShoot = 0;
+        }
+        
+
+        if (ship_ptr[xpos][ypos] == 1 && gui_ptr[xpos][ypos]=='*')
+        {
+            // Need to make it reshoot
+            printf("\nHit\n\n");
+            gui_ptr[xpos][ypos] = 'X';
+            score_ptr[0] = score_ptr[0]+1;
+            score = score +1;
+            drawGui(gui_ptr);
+            shootProb = rand()%3+1;
+            //score_Ptr[0] = score_Ptr[0] +1;
+            //return 1;
+
+        }
+        else if (ship_ptr[xpos][ypos] == 1 && gui_ptr[xpos][ypos] == 'X')
+        {
+            printf("\nYou have Already hitted here please re enter the coords and rehit\n\n");
+            drawGui(gui_ptr);
+            //return 1;
+            // Bad input Need to rewrite coords
+        }
+        else if (ship_ptr[xpos][ypos] != 1 && gui_ptr[xpos][ypos] == 'O')
+        {
+            //Bad input need to reshoot
+            printf("\nYou have Already hitted here please re enter the coords and rehit\n\n");
+            drawGui(gui_ptr);
+            //return 1;
+        }
+        
+        else if (ship_ptr[xpos][ypos] != 1 && gui_ptr[xpos][ypos]== '*')
+        {
+            printf("\nMiss\n\n");
+            gui_ptr[xpos][ypos] = 'O';
+            toShoot = 0;
+            drawGui(gui_ptr);
+            shootProb = rand()%3+1;
+            //return 2;
+        }
+    }
+}
+
+
+
+
+
 int main(){
     char **guiComPtr,**guiPlayer1Ptr,**guiPlayer2Ptr;
     int *shipDefCom,*shipDefPlayer1,*shipDefPlayer2;
@@ -893,7 +723,8 @@ int main(){
     int *comScore,*playerScore,*player2Score;
     int comScoreCounter,playerScoreCounter;
     char levelSelection;
-    int i,j,errorHandler,score;
+    int i,j,errorHandler,score,inputHandler;
+    char player1Name[50],player2Name[50];
 
 
     shipCom = (int**)malloc(11*sizeof(int*));// to know where computer has placed their ship
@@ -907,6 +738,11 @@ int main(){
     {
         guiComPtr[i]=(char*)malloc((11)*sizeof(char));
     }
+    shipDefCom = (int*)malloc(5*sizeof(int));//ship pointer as we have 4 types of ship
+    shipInit(shipDefCom);
+    comScore = (int*)malloc(1*sizeof(int));
+    boardGui(guiComPtr);
+
 
     shipPlayer1 =(int**)malloc((11)*sizeof(int*));
     for (int i = 0; i < 12; i++)
@@ -918,6 +754,12 @@ int main(){
     {
         guiPlayer1Ptr[i]=(char*)malloc((11)*sizeof(char));
     }
+    shipDefPlayer1 = (int*)malloc(5*sizeof(int));
+    shipInit(shipDefPlayer1);
+    playerScore = (int*)malloc(1*sizeof(int));
+    boardGui(guiPlayer1Ptr);
+
+
     shipPlayer2 = (int**)malloc(11*sizeof(int*));// to know where computer has placed their ship
     for (int i = 0; i < 12; i++)
     {
@@ -929,40 +771,98 @@ int main(){
     {
         guiPlayer2Ptr[i]=(char*)malloc((11)*sizeof(char));
     }
-
-    shipDefCom = (int*)malloc(5*sizeof(int));//ship pointer as we have 4 types of ship
-    shipInit(shipDefCom);
-
-    shipDefPlayer1 = (int*)malloc(5*sizeof(int));
-    shipInit(shipDefPlayer1);
-
     shipDefPlayer2 = (int*)malloc(5*sizeof(int));//ship pointer as we have 4 types of ship
     shipInit(shipDefPlayer2);
-
-    comScore = (int*)malloc(1*sizeof(int));
-    playerScore = (int*)malloc(1*sizeof(int));
     player2Score = (int*)malloc(1*sizeof(int));
-
-    boardGui(guiComPtr);
-    boardGui(guiPlayer1Ptr);
     boardGui(guiPlayer2Ptr);
 
-    printf("\nTo play with computer enter 1 to play with player enter 2\n");
+
+
+    printf("\nTo play with computer enter 1 to play with player enter 2 To know the Rules Enter 3\n");
     scanf("%d",&modeSelection);
     if (modeSelection == 1)
     {
-        printf("\nSelect Level\nFor Easy enter 'e' or 'E' for Hard enter 'h' or 'H'\n");
-        scanf("%c",&levelSelection);
+        printf("\nPLease Enter Your Name:  ");
+        scanf("%s",player1Name);   
+        printf("\n\nSelect Level\nFor Easy enter 'e' or 'E' for Hard enter 'h' or 'H'\n\n");
+        scanf("%s",&levelSelection);
         buff_clr();
-        if (levelSelection == 'e' || 'E')
+        /*
+        switch (levelSelection)
         {
+        case 'e':
+        case 'E':
+
+            printf("\nWould You Like to Plcae ship Randomly or do you want to place it your self ?\nTo place randly enter 1 \nTo PLace it your self enter 2\n");
+            scanf("%d",&inputHandler);
+            if (inputHandler <= 1)
+            {
+                shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
+            }
+            if (inputHandler >= 2)
+            {
+                shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+            }
             
+            
+            
+            shipPlacementComputer(shipCom,shipDefCom,guiComPtr);
+            //shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+            boardGui(guiComPtr);
+            boardGui(guiPlayer1Ptr);
+
+            printf("\nDone PLacing %s Ship",player1Name);
+            printf("\n%s is Shooting First\n\n",player1Name);
+            drawGui(guiPlayer1Ptr);
+            printf("LEVEL 1\n");
+            while (comScore[0] != 30 && playerScore[0] != 30)
+            {
+                shootShip(guiComPtr,shipCom,playerScore);
+                printf("\nPlayer Score %d\n\n",playerScore[0]);
+                if (comScore[0] == 30 && playerScore[0] < 30)
+                {   
+                    printf("\nOpps! Computer Won The Game\n\n");
+                    break;
+                }
+                
+                comShootShip(guiPlayer1Ptr,shipPlayer1,comScore);
+                printf("\nComScore %d\n\n",comScore[0]);
+                printf("\n");
+                drawGui(guiComPtr);
+                if (playerScore[0] == 30 && comScore[0] < 30)
+                {
+                    printf("\nCongo!! %s Won The Game :D",player1Name);
+                    break;
+                }        
+            }   
+
+
+            break;
+        case 'h':
+        case 'H':
+
+            printf("\nWould You Like to Plcae ship Randomly or do you want to place it your self ?\nTo place randomly enter 1 \nTo PLace it your self enter 2\n");
+            scanf("%d",&inputHandler);
+            if (inputHandler <= 1)
+            {
+                shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
+            }
+            if (inputHandler >= 2)
+            {
+                shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+            }
+
             shipPlacementComputer(shipCom,shipDefCom,guiComPtr);
             time(NULL);
             shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
             //shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
             boardGui(guiComPtr);
             boardGui(guiPlayer1Ptr);
+
+            printf("\nDone PLacing %s Ship",player1Name);
+            printf("\n%s is Shooting First\n\n",player1Name);
+            drawGui(guiPlayer1Ptr);
+            printf("LEVEL 2\n");
 
             while (comScore[0] != 30 && playerScore[0] != 30)
             {
@@ -973,7 +873,7 @@ int main(){
                     break;
                 }
                 
-                comShootShip(guiPlayer1Ptr,shipPlayer1,comScore);
+                comShootShip_Lvl2(guiPlayer1Ptr,shipPlayer1,comScore);
                 printf("\nComScore %d\n\n",comScore[0]);
                 printf("\n");
                 drawGui(guiComPtr);
@@ -984,19 +884,129 @@ int main(){
             }   
 
 
-        }else if (levelSelection == 'h' || 'H')
+
+            break;
+        
+        default:
+            printf("Wrong Input :(");
+            main();
+            break;
+        }
+        */
+        if (levelSelection == 'e' || levelSelection == 'E')
+        {   
+            printf("\nWould You Like to Plcae ship Randomly or do you want to place it your self ?\nTo place randomly enter 1 \nTo PLace it your self enter 2\n");
+            scanf("%d",&inputHandler);
+            if (inputHandler <= 1)
+            {
+                shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
+            }
+            if (inputHandler >= 2)
+            {
+                shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+            }
+            
+            
+            
+            shipPlacementComputer(shipCom,shipDefCom,guiComPtr);
+            //shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+            boardGui(guiComPtr);
+            boardGui(guiPlayer1Ptr);
+
+            printf("\nDone PLacing %s Ship",player1Name);
+            printf("\n%s is Shooting First\n\n",player1Name);
+            drawGui(guiPlayer1Ptr);
+            printf("LEVEL 1\n");
+            while (comScore[0] != 30 && playerScore[0] != 30)
+            {
+                shootShip(guiComPtr,shipCom,playerScore);
+                printf("\nPlayer Score %d\n\n",playerScore[0]);
+                if (comScore[0] == 30 && playerScore[0] < 30)
+                {   
+                    printf("\nOpps! Computer Won The Game\n\n");
+                    break;
+                }
+                
+                comShootShip(guiPlayer1Ptr,shipPlayer1,comScore);
+                printf("\nComScore %d\n\n",comScore[0]);
+                printf("\n");
+                drawGui(guiComPtr);
+                if (playerScore[0] == 30 && comScore[0] < 30)
+                {
+                    printf("\nCongo!! %s Won The Game :D",player1Name);
+                    break;
+                }        
+            }   
+
+
+        }else if (levelSelection == 'h' ||levelSelection == 'H')
         {
-            /* code */
+
+            printf("\nWould You Like to Plcae ship Randomly or do you want to place it your self ?\nTo place randomly enter 1 \nTo PLace it your self enter 2\n");
+            scanf("%d",&inputHandler);
+            if (inputHandler <= 1)
+            {
+                shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
+            }
+            if (inputHandler >= 2)
+            {
+                shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+            }
+
+            shipPlacementComputer(shipCom,shipDefCom,guiComPtr);
+            //shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
+            //shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+            boardGui(guiComPtr);
+            boardGui(guiPlayer1Ptr);
+
+            printf("\nDone PLacing %s Ship",player1Name);
+            printf("\n%s is Shooting First\n\n",player1Name);
+            drawGui(guiPlayer1Ptr);
+
+            printf("LEVEL 2\n");
+
+            while (comScore[0] != 30 && playerScore[0] != 30)
+            {
+                shootShip(guiComPtr,shipCom,playerScore);
+                printf("\nPlayer Score %d\n\n",playerScore[0]);
+                if (comScore[0] == 30 && playerScore[0] < 30)
+                {
+                    printf("\nOpps! Computer Won The Game\n\n");
+                    break;
+                }
+                
+                comShootShip_Lvl2(guiPlayer1Ptr,shipPlayer1,comScore);
+                printf("\nComScore %d\n\n",comScore[0]);
+                printf("\n");
+                drawGui(guiComPtr);
+                if (playerScore[0] == 30 && comScore[0] < 30)
+                {
+                    printf("\nCongo!! %s Won The Game :D",player1Name);
+                    break;
+                }        
+            }
+            if (playerScore[0] == 30 && comScore[0] < 30)
+            {
+                printf("\nCongo!! %s Won The Game :D",player1Name);
+            }   
+            if (comScore[0] == 30 && playerScore[0] < 30)
+            {
+                printf("\nOpps! Computer Won The Game\n\n");
+            }
         }
         else{
             printf("Wrong Input :(");
+            main();
         }
         
         
     }
     else if (modeSelection == 2)
     {
-        
+        printf("\nEnter Player 1 Name:  ");
+        scanf("%s",player1Name);
+        printf("\nEnter Player 2 Name:  ");
+        scanf("%s",player2Name);
         shipPlacementComputer(shipPlayer2,shipDefPlayer2,guiPlayer2Ptr);
         time(NULL);
         shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
@@ -1010,8 +1020,9 @@ int main(){
             printf("\nPlayer Score %d\n\n",playerScore[0]);
             printf("\n\n");
             //drawGui(guiPlayer2Ptr);
-            if (playerScore[0] == 30)
+            if (playerScore[0] == 30 && player2Score[0] < 30)
             {
+                printf("\nCongo ! %s Won The Game\n%s Better Luck Next tine",player1Name,player2Name);
                 break;
             }
             
@@ -1019,145 +1030,30 @@ int main(){
             printf("\nComScore %d\n\n",player2Score[0]);
             printf("\n\n");
             //drawGui(guiPlayer1Ptr);
-            if (player2Score[0] == 30)
+            if (player2Score[0] == 30 && playerScore[0] < 30)
             {
+                printf("\nCongo ! %s Won The Game\n%s Better Luck Next tine",player2Name,player1Name);
                 break;
             }        
         }
 
     }
-    else{
-        printf("Wrong Value Exiting Code..... :(");
-    }
-    
-    
-
-
-
-
-
-    /*
-    printf("\n\nDo you want to Place Ship Randomly ?? if Yes Enter 1 or else Enter 2");
-    scanf("%d",&placeShipSelection);
-    if (placeShipSelection == 1)
+    else if (modeSelection == 3)
     {
-        shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
+        printf("\n***********************RULES************************************\n");
+        printf("\nTotal: 10 Ships -----\n************ 4 ships over 2 boxes **************\n************* 3 ships over 3 boxes **************\n******************* 2 ships over 4 boxes**********\n***************** 1 ship over 5 boxes ************\n");
+        printf("***************Must remain in a line (not around a corner) At least one box must remain between the ships***************\n");
+        printf("If a player has hit a piece of a ship, he may guess again. As soon as all pieces of a ship have been found, one says 'sunk'.\n");
+        printf("The game continues until one of the two players has found or 'sunk' all of his opponent's ships\n\n");
+        //printf("\nTo play with computer enter 1 to play with player enter 2 To know the Rules Enter 3\n");
+        //scanf("%d",&modeSelection);
+        main();
     }
     else{
-        shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
+        printf("Wrong Value Try Again Code..... :(");
+        main();
     }
-    boardGui(guiPlayer1Ptr);*/
-
-
-
-
-
-
-
-
-
-
-/*
-    boardGui(guiComPtr);
-    shipPtrSet(shipCom);
-    drawGui(guiComPtr);
-    shipPlacement(shipCom,guiComPtr,ship);
-*/
-
-    /*
-    printf("\nTo play with Player Enter 1\nTo play with computer enter 2");
-    scanf("%d",&modeSelection);
-    buff_clr();
-    if (modeSelection == 1){
-        printf("\n Player Vs PLayer");
-        /*
-        shipPlayer2 = (int**)malloc(11*sizeof(int*));// to know where computer has placed their ship
-        for (int i = 0; i < 12; i++)
-        {
-            shipPlayer2[i]=(int*)malloc(11*sizeof(int));
-        }
-
-        guiPlayer2Ptr = (char**)malloc((11)*sizeof(char*));// the gui board of our game
-        for(i=0;i<12;i++)
-        {
-            guiPlayer2Ptr[i]=(char*)malloc((11)*sizeof(char));
-        }
-
-        shipPlayer1 =(int**)malloc((11)*sizeof(int*));
-        for (int i = 0; i < 12; i++)
-        {
-            shipPlayer1[i] = int(*)malloc((11)*sizeof(int));
-        }
-        guiPLayer1Ptr = (char**)malloc((11)*sizeof(char*));// the gui board of our game
-        for(i=0;i<12;i++)
-        {
-            guiPLayer1Ptr[i]=(char*)malloc((11)*sizeof(char));
-        }*//*
-    }
-    if(modeSelection ==2){
-
-        shipCom = (int**)malloc(11*sizeof(int*));// to know where computer has placed their ship
-        for (int i = 0; i < 12; i++)
-        {
-            shipCom[i]=(int*)malloc(11*sizeof(int));
-        }
-
-        guiComPtr = (char**)malloc((11)*sizeof(char*));// the gui board of our game
-        for(i=0;i<12;i++)
-        {
-            guiComPtr[i]=(char*)malloc((11)*sizeof(char));
-        }
-
-        shipPlayer1 =(int**)malloc((11)*sizeof(int*));
-        for (int i = 0; i < 12; i++)
-        {
-            shipPlayer1[i] = (int*)malloc((11)*sizeof(int));
-        }
-        guiPlayer1Ptr = (char**)malloc((11)*sizeof(char*));// the gui board of our game
-        for(i=0;i<12;i++)
-        {
-            guiPlayer1Ptr[i]=(char*)malloc((11)*sizeof(char));
-        }
-
-        shipDefCom = (int*)malloc(5*sizeof(int));//ship pointer as we have 4 types of ship
-        shipInit(shipDefCom);
-
-        shipDefPlayer1 = (int*)malloc(5*sizeof(int));
-        shipInit(shipDefPlayer1);
-
-        boardGui(guiComPtr);
-        boardGui(guiPlayer1Ptr);
-
-
-
-        printf("\nEnter 'E' for Easy level or Enter 'M' for Medium Level");
-        scanf("%c",&levelSelection);
-        buff_clr();
-        levelSelection = toupper(levelSelection);
-        switch (levelSelection)
-        {
-        case 'E':
-            shipPlacementComputer(shipCom,shipDefCom,guiComPtr);
-            boardGui(guiComPtr);
-            printf("\n\nDo you want to Place Ship Randomly ?? if Yes Enter 1 or else Enter 2");
-            scanf("%d",&placeShipSelection);
-            if (placeShipSelection == 1)
-            {
-                shipPlacementComputer(shipPlayer1,shipDefPlayer1,guiPlayer1Ptr);
-            }
-            else{
-                shipPlacement(shipPlayer1,guiPlayer1Ptr,shipDefPlayer1);
-            }
-            boardGui(guiPlayer1Ptr);
-            level1(shipCom,shipPlayer1,guiComPtr,guiPlayer1Ptr);
-            break;
-        
-        default:
-            break;
-        }
-        
-    }
-    */
-
+    
+    
     return 0;
 }
